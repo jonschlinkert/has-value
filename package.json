@@ -1,7 +1,7 @@
 {
   "name": "has-value",
-  "description": "Returns true if a value exists, false if empty. Works for booleans, functions, numbers, strings, nulls, objects and arrays. Other libs do this, but I needed one that would optionally _not_ treat zero as empty. Also, this works with booleans and other values that other libs fail to test properly.",
-  "version": "0.1.1",
+  "description": "Returns true if a value exists, false if empty. Works with deeply nested values using object paths.",
+  "version": "0.2.0",
   "homepage": "https://github.com/jonschlinkert/has-value",
   "author": {
     "name": "Jon Schlinkert",
@@ -27,6 +27,10 @@
   },
   "scripts": {
     "test": "mocha"
+  },
+  "dependencies": {
+    "get-value": "^1.1.1",
+    "has-values": "^0.1.2"
   },
   "devDependencies": {
     "mocha": "*",
