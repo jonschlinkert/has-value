@@ -7,14 +7,104 @@
 
 'use strict';
 
+/* deps:mocha */
 var should = require('should');
 var hasValue = require('./');
 
 function isEmpty(o, isZero) {
-  return !hasValue(o, isZero);
+  return !hasValue.apply(hasValue, arguments);
 }
 
-describe('hasValue', function () {
+var o = {a: null, b: undefined, c: true, d: false, e: '', f: 'string', g: 0, h: 1, i: 0, j: {}, k: {a: 'b'}, l: [], m: ['a', 'b'], n: function (foo) {}, o: function () {}};
+
+var a = {b: {c: o}};
+
+describe('object properties', function () {
+  it('should work for nulls', function () {
+    hasValue(o, 'a').should.be.false;
+    hasValue(o, 'b').should.be.false;
+  });
+
+  it('should work for booleans', function () {
+    hasValue(o, 'c').should.be.true;
+    hasValue(o, 'd').should.be.true;
+  });
+
+  it('shold work for strings', function () {
+    hasValue(o, 'e').should.be.false;
+    hasValue(o, 'f').should.be.true;
+  });
+
+  it('should work for numbers', function () {
+    hasValue(o, 'g').should.be.true;
+    hasValue(o, 'h').should.be.true;
+  });
+
+  it('should treat zero as null when `noZero` is set', function () {
+    hasValue(o, 'i', true).should.be.false;
+  });
+
+  it('should work for objects', function () {
+    hasValue(o, 'j').should.be.false;
+    hasValue(o, 'k').should.be.true;
+  });
+
+  it('should work for arrays', function () {
+    hasValue(o, 'l').should.be.false;
+    hasValue(o, 'm').should.be.true;
+  });
+
+  it('should work for functions', function () {
+    hasValue(o, 'n').should.be.true;
+    hasValue(o, 'o').should.be.false;
+    hasValue(o, 'o').should.not.be.true;
+  });
+});
+
+describe('nested object properties', function () {
+  it('should work for nulls', function () {
+    hasValue(a, 'b.c.a').should.be.false;
+    hasValue(a, 'b.c.b').should.be.false;
+  });
+
+  it('should work for booleans', function () {
+    hasValue(a, 'b.c.c').should.be.true;
+    hasValue(a, 'b.c.d').should.be.true;
+  });
+
+  it('shold work for strings', function () {
+    hasValue(a, 'b.c.e').should.be.false;
+    hasValue(a, 'b.c.f').should.be.true;
+  });
+
+  it('should work for numbers', function () {
+    hasValue(a, 'b.c.g').should.be.true;
+    hasValue(a, 'b.c.h').should.be.true;
+  });
+
+  it('should treat zero as null when `noZero` is set', function () {
+    hasValue(a, 'b.c.i', true).should.be.false;
+  });
+
+  it('should work for objects', function () {
+    hasValue(a, 'b.c.j').should.be.false;
+    hasValue(a, 'b.c.k').should.be.true;
+  });
+
+  it('should work for arrays', function () {
+    hasValue(a, 'b.c.l').should.be.false;
+    hasValue(a, 'b.c.m').should.be.true;
+  });
+
+  it('should work for functions', function () {
+    hasValue(a, 'b.c.n').should.be.true;
+    hasValue(a, 'b.c.o').should.be.false;
+    hasValue(a, 'b.c.o').should.not.be.true;
+  });
+});
+
+
+describe('single values', function () {
   it('should work for nulls', function () {
     hasValue(null).should.be.false;
     hasValue(undefined).should.be.false;

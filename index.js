@@ -7,30 +7,16 @@
 
 'use strict';
 
-module.exports = function hasValue(o, noZero) {
-  if (o === null || o === undefined) {
-    return false;
-  }
+var get = require('get-value');
+var hasValues = require('has-values');
 
-  if (typeof o === 'boolean') {
-    return true;
+module.exports = function (o, path, fn) {
+  var len = arguments.length;
+  if (len === 1 || (len === 2 && typeof path === 'boolean')) {
+    return hasValues.apply(hasValues, arguments);
   }
-
-  if (typeof o === 'number') {
-    if (o === 0 && noZero === true) {
-      return false;
-    }
-    return true;
+  if (len === 3 && typeof fn === 'boolean') {
+    return hasValues(get.apply(get, arguments), fn);
   }
-
-  if (o.length !== undefined) {
-    return o.length !== 0;
-  }
-
-  for (var key in o) {
-    if (o.hasOwnProperty(key)) {
-      return true;
-    }
-  }
-  return false;
+  return hasValues(get.apply(get, arguments));
 };
