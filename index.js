@@ -7,16 +7,13 @@
 
 'use strict';
 
-var get = require('get-value');
+var isObject = require('isobject');
 var hasValues = require('has-values');
+var get = require('get-value');
 
-module.exports = function (o, path, fn) {
-  var len = arguments.length;
-  if (len === 1 || (len === 2 && typeof path === 'boolean')) {
-    return hasValues.apply(hasValues, arguments);
+module.exports = function (obj, prop, noZero) {
+  if (isObject(obj)) {
+    return hasValues(get(obj, prop), noZero);
   }
-  if (len === 3 && typeof fn === 'boolean') {
-    return hasValues(get.apply(get, arguments), fn);
-  }
-  return hasValues(get.apply(get, arguments));
+  return hasValues(obj, prop);
 };
