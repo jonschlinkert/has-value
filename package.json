@@ -1,6 +1,6 @@
 {
   "name": "has-value",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Returns true if a value exists, false if empty. Works with deeply nested values using object paths.",
   "homepage": "https://github.com/jonschlinkert/has-value",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
