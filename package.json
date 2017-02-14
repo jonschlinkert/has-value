@@ -22,7 +22,7 @@
   "dependencies": {
     "get-value": "^2.0.3",
     "has-values": "^0.1.4",
-    "isobject": "^2.0.0"
+    "isobject": "^3.0.0"
   },
   "devDependencies": {
     "gulp-format-md": "^0.1.7",
