@@ -27,7 +27,7 @@ Works with nested object paths or a single value:
 ```js
 var hasValue = require('has-value');
 
-hasValue({a: {b: {c: 'foo'}}} 'a.b.c');
+hasValue({a: {b: {c: 'foo'}}}, 'a.b.c');
 //=> true
 
 hasValue('a');
