@@ -2,7 +2,7 @@
  * has-value <https://github.com/jonschlinkert/has-value>
  *
  * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
+ * Licensed under the MIT License.
  */
 
 'use strict';
