@@ -7,10 +7,9 @@
 
 'use strict';
 
-var isObject = require('isobject');
-var hasValues = require('has-values');
-var get = require('get-value');
+const get = require('get-value');
+const has = require('has-values');
 
-module.exports = function(val, prop) {
-  return hasValues(isObject(val) && prop ? get(val, prop) : val);
+module.exports = function(obj, path, options) {
+  return has(get(obj, path, options));
 };

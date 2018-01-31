@@ -1,102 +1,97 @@
-/*!
- * has-value <https://github.com/jonschlinkert/has-value>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Licensed under the MIT License.
- */
-
 'use strict';
 
 require('mocha');
-var assert = require('assert');
-var hasValue = require('./');
+const assert = require('assert');
+const has = require('./');
 
-describe('object properties', function() {
-  it('should be true when value is "null"', function() {
-    assert(hasValue(null, 'foo'));
-    assert(hasValue({foo: null}, 'foo'));
-    assert(hasValue({foo: {bar: null}}, 'foo.bar'));
+describe('has value', function() {
+  it('should be true when property value is "null"', function() {
+    assert(has(null));
+    assert(has({ foo: null }, 'foo'));
+    assert(has({ foo: { bar: null } }, 'foo.bar'));
   });
 
-  it('should be false when value is "undefined"', function() {
-    assert(!hasValue(undefined));
-    assert(!hasValue({foo: undefined}, 'foo'));
-    assert(!hasValue({foo: {bar: undefined}}, 'foo.bar'));
+  it('should be false when property value is "undefined"', function() {
+    assert(!has(undefined));
+    assert(!has({ foo: undefined }, 'foo'));
+    assert(!has({ foo: { bar: undefined } }, 'foo.bar'));
   });
 
-  it('should work for booleans', function() {
-    assert(hasValue(true));
-    assert(hasValue(false));
-    assert(hasValue({foo: true}, 'foo'));
-    assert(hasValue({foo: false}, 'foo'));
-    assert(hasValue({foo: {bar: false}}, 'foo.bar'));
+  it('should be true when property value is boolean', function() {
+    assert(has(true));
+    assert(has(false));
+    assert(has({ foo: true }, 'foo'));
+    assert(has({ foo: false }, 'foo'));
+    assert(has({ foo: { bar: false } }, 'foo.bar'));
   });
 
-  it('should return false for empty strings', function() {
-    assert(!hasValue(''));
-    assert(!hasValue({foo: ''}, 'foo'));
-    assert(!hasValue({foo: {bar: ''}}, 'foo.bar'));
+  it('should be false when property value is an empty string', function() {
+    assert(!has(''));
+    assert(!has({ foo: '' }, 'foo'));
+    assert(!has({ foo: { bar: '' } }, 'foo.bar'));
   });
 
-  it('should return true for non-empty strings', function() {
-    assert(hasValue('foo'));
-    assert(hasValue({foo: 'abc'}, 'foo'));
-    assert(hasValue({foo: {bar: 'abc'}}, 'foo.bar'));
+  it('should be true when property value is a string', function() {
+    assert(has('foo'));
+    assert(has({ foo: 'abc' }, 'foo'));
+    assert(has({ foo: { bar: 'abc' } }, 'foo.bar'));
   });
 
   it('should be true for numbers', function() {
-    assert(hasValue(0));
-    assert(hasValue({foo: 0}));
-    assert(hasValue({foo: 0}, 'foo'));
-    assert(hasValue({foo: {bar: 0}}, 'foo.bar'));
+    assert(has(0));
+    assert(has({ foo: 0 }));
+    assert(has({ foo: 0 }, 'foo'));
+    assert(has({ foo: { bar: 0 } }, 'foo.bar'));
 
-    assert(hasValue(9));
-    assert(hasValue({foo: 9}));
-    assert(hasValue({foo: 9}, 'foo'));
-    assert(hasValue({foo: {bar: 9}}, 'foo.bar'));
+    assert(has(9));
+    assert(has({ foo: 9 }));
+    assert(has({ foo: 9 }, 'foo'));
+    assert(has({ foo: { bar: 9 } }, 'foo.bar'));
   });
 
   it('should work for objects', function() {
-    assert(!hasValue({}));
-    assert(!hasValue({foo: undefined}));
-    assert(!hasValue({foo: {}}));
-    assert(!hasValue({foo: {}}, 'foo'));
-    assert(!hasValue({foo: {bar: {}}}, 'foo.bar'));
+    assert(has({ foo: 1 }));
+    assert(has({ foo: null }));
+    assert(has({ foo: null }, 'foo'));
+    assert(has({ foo: { bar: null } }, 'foo.bar'));
+    assert(has({ foo: { bar: 'baz' } }));
+    assert(has({ foo: { bar: 'baz' } }, 'foo.bar'));
 
-    assert(hasValue({foo: null}));
-    assert(hasValue({foo: null}, 'foo'));
-    assert(hasValue({foo: {bar: null}}, 'foo.bar'));
-    assert(hasValue({foo: {bar: 'baz'}}));
-    assert(hasValue({foo: {bar: 'baz'}}, 'foo.bar'));
+    assert(!has({}));
+    assert(!has({ foo: '' }));
+    assert(!has({ foo: undefined }));
+    assert(!has({ foo: {} }));
+    assert(!has({ foo: {} }, 'foo'));
+    assert(!has({ foo: { bar: {} } }, 'foo.bar'));
   });
 
   it('should work for arrays', function() {
-    assert(!hasValue([]));
-    assert(!hasValue({foo: []}));
-    assert(!hasValue({foo: []}, 'foo'));
-    assert(!hasValue(['']));
-    assert(!hasValue([undefined]));
-    assert(!hasValue([[]]));
-    assert(!hasValue([[], []]));
-    assert(!hasValue({foo: [[]]}));
-    assert(!hasValue({foo: [[], []]}, 'foo'));
-    assert(!hasValue({foo: {bar: [[], []]}}, 'foo.bar'));
+    assert(!has([]));
+    assert(!has({ foo: [] }));
+    assert(!has({ foo: [] }, 'foo'));
+    assert(!has(['']));
+    assert(!has([undefined]));
+    assert(!has([[]]));
+    assert(!has([[], []]));
+    assert(!has({ foo: [[]] }));
+    assert(!has({ foo: [[], []] }, 'foo'));
+    assert(!has({ foo: { bar: [[], []] } }, 'foo.bar'));
 
-    assert(hasValue([0]));
-    assert(hasValue([null]));
-    assert(hasValue(['foo']));
-    assert(hasValue({foo: [0]}, 'foo'));
-    assert(hasValue({foo: [null]}, 'foo'));
-    assert(hasValue({foo: ['foo']}, 'foo'));
-    assert(hasValue({foo: {bar: [0]}}, 'foo.bar'));
-    assert(hasValue({foo: {bar: [null]}}, 'foo.bar'));
-    assert(hasValue({foo: {bar: ['foo']}}, 'foo.bar'));
+    assert(has([0]));
+    assert(has([null]));
+    assert(has(['foo']));
+    assert(has({ foo: [0] }, 'foo'));
+    assert(has({ foo: [null] }, 'foo'));
+    assert(has({ foo: ['foo'] }, 'foo'));
+    assert(has({ foo: { bar: [0] } }, 'foo.bar'));
+    assert(has({ foo: { bar: [null] } }, 'foo.bar'));
+    assert(has({ foo: { bar: ['foo'] } }, 'foo.bar'));
   });
 
   it('should work for functions', function() {
-    assert(hasValue(function() {}));
-    assert(hasValue({foo: function() {}}));
-    assert(hasValue({foo: function() {}}, 'foo'));
-    assert(hasValue({foo: {bar: function() {}}}, 'foo.bar'));
+    assert(has(function() {}));
+    assert(has({ foo: function() {} }));
+    assert(has({ foo: function() {} }, 'foo'));
+    assert(has({ foo: { bar: function() {} } }, 'foo.bar'));
   });
 });
