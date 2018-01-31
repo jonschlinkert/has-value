@@ -2,12 +2,27 @@
 
 > Returns true if a value exists, false if empty. Works with deeply nested values using object paths.
 
+Please consider following this project's author, [Jon Schlinkert](https://github.com/jonschlinkert), and consider starring the project to show your :heart: and support.
+
 ## Install
 
 Install with [npm](https://www.npmjs.com/):
 
 ```sh
 $ npm install --save has-value
+```
+
+## Heads up!
+
+Breaking changes in v2.0! See the [release history](#release-history) for details.
+
+## Usage
+
+```js
+const has = require('has-value');
+
+console.log(has()) //=> true
+console.log(has('foo')) //=> true
 ```
 
 **Works for:**
@@ -20,73 +35,133 @@ $ npm install --save has-value
 * object
 * arrays
 
-## Usage
-
-Works with property values (supports object-path notation, like `foo.bar`) or a single value:
-
-```js
-var hasValue = require('has-value');
-
-hasValue('foo');
-hasValue({foo: 'bar'}, 'foo');
-hasValue({a: {b: {c: 'foo'}}}, 'a.b.c');
-//=> true
-
-hasValue('');
-hasValue({foo: ''}, 'foo');
-//=> false
-
-hasValue(0);
-hasValue(1);
-hasValue({foo: 0}, 'foo');
-hasValue({foo: 1}, 'foo');
-hasValue({foo: null}, 'foo');
-hasValue({foo: {bar: 'a'}}}, 'foo');
-hasValue({foo: {bar: 'a'}}}, 'foo.bar');
-//=> true
-
-hasValue({foo: {}}}, 'foo');
-hasValue({foo: {bar: {}}}}, 'foo.bar');
-hasValue({foo: undefined}, 'foo');
-//=> false
-
-hasValue([]);
-hasValue([[]]);
-hasValue([[], []]);
-hasValue([undefined]);
-hasValue({foo: []}, 'foo');
-//=> false
-
-hasValue([0]);
-hasValue([null]);
-hasValue(['foo']);
-hasValue({foo: ['a']}, 'foo');
-//=> true
-
-hasValue(function() {})
-hasValue(function(foo) {})
-hasValue({foo: function(foo) {}}, 'foo'); 
-hasValue({foo: function() {}}, 'foo');
-//=> true
-
-hasValue(true);
-hasValue(false);
-hasValue({foo: true}, 'foo');
-hasValue({foo: false}, 'foo');
-//=> true
-```
-
-## isEmpty
+**isEmpty**
 
 To do the opposite and test for empty values, do:
 
 ```js
-function isEmpty(o) {
-  return !hasValue.apply(hasValue, arguments);
-}
+const isEmpty = (...args) => !has(...args);
+```
+
+## Supported types
+
+### Arrays
+
+```js
+console.log(has({ foo: { bar: ['a'] } }, 'foo.bar'));    //=> true
+console.log(has({ foo: { bar: [0] } }, 'foo.bar'));      //=> true
+console.log(has({ foo: { bar: [[[]]] } }, 'foo.bar'));   //=> false
+console.log(has({ foo: { bar: [[], []] } }, 'foo.bar')); //=> false
+console.log(has({ foo: { bar: [] } }, 'foo.bar'));       //=> false
+```
+
+### Booleans
+
+```js
+console.log(has({ foo: { bar: true } }, 'foo.bar'));  //=> true
+console.log(has({ foo: { bar: false } }, 'foo.bar')); //=> true
+```
+
+### Buffers
+
+```js
+console.log(has({ foo: { bar: new Buffer() } }, 'foo.bar'));      //=> false
+console.log(has({ foo: { bar: new Buffer('foo') } }, 'foo.bar')); //=> true
+```
+
+### Dates
+
+Dates are always true.
+
+```js
+console.log(has({ foo: { bar: new Date() } }, 'foo.bar')); //=> true
+```
+
+### Errors
+
+Returns `false` if `err.message` is an empty string.
+
+```js
+console.log(has({ foo: { bar: new Error() } }, 'foo.bar'));      //=> false
+console.log(has({ foo: { bar: new Error('foo') } }, 'foo.bar')); //=> true
+```
+
+### Functions
+
+Functions are always true.
+
+```js
+console.log(has({ foo: { bar: function(foo) {} } }, 'foo.bar')); //=> true
+console.log(has({ foo: { bar: function() {} } }, 'foo.bar'));    //=> true
+```
+
+### Maps
+
+```js
+console.log(has({ foo: { bar: new Map() } }, 'foo.bar'));                 //=> false
+console.log(has({ foo: { bar: new Map([['foo', 'bar']]) } }, 'foo.bar')); //=> true
+```
+
+### Null
+
+`null` is always true, as it's assumed that this is a user-defined value, versus `undefined` which is not.
+
+```js
+console.log(has({ foo: { bar: null } }, 'foo.bar')); //=> true
+```
+
+### Objects
+
+```js
+console.log(has({ foo: { bar: {} } }, 'foo.bar')); //=> false
+console.log(has({ foo: { bar: { a: 'a' }} } }, 'foo.bar'));        //=> true
+console.log(has({ foo: { bar: { foo: undefined } } }, 'foo.bar')); //=> false
+console.log(has({ foo: { bar: { foo: null } } }, 'foo.bar'));      //=> true
+```
+
+### Numbers
+
+```js
+console.log(has({ foo: { bar: 1 } }, 'foo.bar')); //=> true
+console.log(has({ foo: { bar: 0 } }, 'foo.bar')); //=> true
+```
+
+### Regular expressions
+
+```js
+console.log(has({ foo: { bar: new RegExp() } }, 'foo.bar'));      //=> false
+console.log(has({ foo: { bar: new RegExp('foo') } }, 'foo.bar')); //=> true
+```
+
+### Sets
+
+```js
+console.log(has({ foo: { bar: new Set() } }, 'foo.bar'));               //=> false
+console.log(has({ foo: { bar: new Set(['foo', 'bar']) } }, 'foo.bar')); //=> true
+```
+
+### Strings
+
+```js
+console.log(has({ foo: { bar: 'a' } }, 'foo.bar')); //=> true
+console.log(has({ foo: { bar: '' } }, 'foo.bar'));  //=> false
+```
+
+## Undefined
+
+```js
+console.log(has({ foo: { bar:  } }, 'foo.bar'));          //=> false
+console.log(has({ foo: { bar: void 0 } }, 'foo.bar'));    //=> false
+console.log(has({ foo: { bar: undefined } }, 'foo.bar')); //=> false
 ```
 
 ## Release history
+
+### v2.0.0
+
+**Breaking changes**
+
+* Now returns false if the first argument is not an object, function or array, and the second argument is not a string or array.
 
 ### v1.0.0
 
@@ -96,25 +171,26 @@ function isEmpty(o) {
 
 ## About
 
-### Related projects
-
-* [define-property](https://www.npmjs.com/package/define-property): Define a non-enumerable property on an object. | [homepage](https://github.com/jonschlinkert/define-property "Define a non-enumerable property on an object.")
-* [get-value](https://www.npmjs.com/package/get-value): Use property paths (`a.b.c`) to get a nested value from an object. | [homepage](https://github.com/jonschlinkert/get-value "Use property paths (`a.b.c`) to get a nested value from an object.")
-* [set-value](https://www.npmjs.com/package/set-value): Create nested values and any intermediaries using dot notation (`'a.b.c'`) paths. | [homepage](https://github.com/jonschlinkert/set-value "Create nested values and any intermediaries using dot notation (`'a.b.c'`) paths.")
-* [unset-value](https://www.npmjs.com/package/unset-value): Delete nested properties from an object using dot notation. | [homepage](https://github.com/jonschlinkert/unset-value "Delete nested properties from an object using dot notation.")
-
-### Contributing
+<details>
+<summary><strong>Contributing</strong></summary>
 
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
 
-### Contributors
+</details>
 
-| **Commits** | **Contributor** | 
-| --- | --- |
-| 17 | [jonschlinkert](https://github.com/jonschlinkert) |
-| 2 | [rmharrison](https://github.com/rmharrison) |
+<details>
+<summary><strong>Running Tests</strong></summary>
 
-### Building docs
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+
+```sh
+$ npm install && npm test
+```
+
+</details>
+
+<details>
+<summary><strong>Building docs</strong></summary>
 
 _(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
 
@@ -124,26 +200,38 @@ To generate the readme, run the following command:
 $ npm install -g verbose/verb#dev verb-generate-readme && verb
 ```
 
-### Running tests
+</details>
 
-Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+### Related projects
 
-```sh
-$ npm install && npm test
-```
+You might also be interested in these projects:
+
+* [define-property](https://www.npmjs.com/package/define-property): Define a non-enumerable property on an object. Uses Reflect.defineProperty when available, otherwise Object.defineProperty. | [homepage](https://github.com/jonschlinkert/define-property "Define a non-enumerable property on an object. Uses Reflect.defineProperty when available, otherwise Object.defineProperty.")
+* [get-value](https://www.npmjs.com/package/get-value): Use property paths (`a.b.c`) to get a nested value from an object. | [homepage](https://github.com/jonschlinkert/get-value "Use property paths (`a.b.c`) to get a nested value from an object.")
+* [set-value](https://www.npmjs.com/package/set-value): Create nested values and any intermediaries using dot notation (`'a.b.c'`) paths. | [homepage](https://github.com/jonschlinkert/set-value "Create nested values and any intermediaries using dot notation (`'a.b.c'`) paths.")
+* [unset-value](https://www.npmjs.com/package/unset-value): Delete nested properties from an object using dot notation. | [homepage](https://github.com/jonschlinkert/unset-value "Delete nested properties from an object using dot notation.")
+
+### Contributors
+
+| **Commits** | **Contributor** | 
+| --- | --- |
+| 24 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 2 | [rmharrison](https://github.com/rmharrison) |
+| 1 | [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg) |
 
 ### Author
 
 **Jon Schlinkert**
 
+* [linkedin/in/jonschlinkert](https://linkedin.com/in/jonschlinkert)
 * [github/jonschlinkert](https://github.com/jonschlinkert)
 * [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
 
 ### License
 
-Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Copyright © 2018, [Jon Schlinkert](https://github.com/jonschlinkert).
 Released under the [MIT License](LICENSE).
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on May 19, 2017._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on January 30, 2018._
