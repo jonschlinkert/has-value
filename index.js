@@ -18,5 +18,5 @@ module.exports = function(obj, path, options) {
 };
 
 function isObject(val) {
-  return val != null && typeof val === 'object' || typeof val === 'function' || Array.isArray(val);
+  return val != null && (typeof val === 'object' || typeof val === 'function' || Array.isArray(val));
 }
